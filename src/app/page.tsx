@@ -1,113 +1,362 @@
-import Image from 'next/image'
+'use client';
 
+import Image from 'next/image';
+import Link from 'next/link';
+import { useState } from 'react';
+import ApplyNowModal from './components/ApplyNowModal';
+import LoginModal from './components/LoginModal';
+
+
+interface FAQEntry {
+  question: string;
+  answer: string;
+}
+const questionsAnswers: FAQEntry[] = [
+  {
+    question: "How do I apply for a credit card?",
+    answer: "To apply for a credit card, visit our website, select the credit card that best suits your needs, and click on the 'Apply Now' button. You'll need to provide some personal and financial information to complete your application."
+  },
+  {
+    question: "Who do I contact for more questions?",
+    answer: "For any additional questions, please contact our customer service team through our website, by phone, or visit one of our branches."
+  }
+  ,
+  {
+    question: "What are the eligibility criteria for obtaining a credit card?",
+    answer: "Eligibility criteria vary by card, but generally, you must be at least 18 years old, have a stable income, and possess a good credit score. Specific requirements such as minimum income or employment type may also apply."
+  },
+  {
+    question: "What should I do if my credit card is lost or stolen?",
+    answer: "If your credit card is lost or stolen, please report it immediately to our customer service team, available 24/7. We will block your card to prevent any fraudulent transactions and issue a replacement card."
+  }
+ 
+  // You can add more questions and answers here
+];
 export default function Home() {
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [activeIndex, setActiveIndex] = useState<number | null>(null); // Use TypeScript for state typing
+
+  const toggleFAQ = (index: number): void => {
+    setActiveIndex(activeIndex === index ? null : index); // Function to toggle visibility of the answer
+  };
+  
+  
+
+  const openLoginModal = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the default navigation behavior
+    setIsLoginModalOpen(true);
+  };
+
+  const closeLoginModal = () => setIsLoginModalOpen(false);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+
+  const openApplyModal = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent the default navigation behavior
+    setIsApplyModalOpen(true);
+  };
+
+  const closeApplyModal = () => setIsApplyModalOpen(false);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
+    <div>
+      <section className="bg-white text-gray-950 py-20 px-4 md:px-16 flex flex-col md:flex-row items-center justify-between md:space-x-12">
+        {/* Content Section */}
+        <div className="max-w-lg md:w-1/2 text-center md:text-left">
+          <h2 className="sm:text-base text-sm uppercase tracking-widest text-gray-900 mb-2">
+            Trusted Business Partner
+          </h2>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Your Gateway to Intelligent Credit Card Solutions
+          </h1>
+          <p className="text-lg md:text-xl text-gray-900 mb-6">
+            Welcome to NaviPro: Where Smart Choices Meet Limitless Rewards
+            with Our Range of Credit Cards!
+          </p>
+          <button
+              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition duration-300"
+              onClick={openLoginModal} // Attach the click handler
+            >
+              Login
+            </button>
+        </div>
+
+        {/* Image Section */}
+        <div className="relative w-full md:w-1/2 h-64 md:h-auto mt-8 md:mt-0">
+          <Image
+            src="/image.png" // Replace with your optimized image path in the public folder
+            alt="Hand holding a credit card"
+            objectFit="contain"
+            className="rounded-full shadow-2xl shadow-blue-300 "
+            height={600}
+            width={500}
+          />
+        </div>
+      </section>
+        {/* Login Modal */}
+        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+      <section className="bg-white text-gray-950 py-24 px-4 md:px-10 flex flex-col items-center text-center" id='about'>
+        {/* About Us Section */}
+        <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          Welcome To NaviPro Consultancy Company
+        </h2>
+        <p className="text-lg text-gray-700 mb-4">
+          We are a trusted consulting company.
         </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
+        <p className="text-lg text-gray-900 max-w-3xl mb-6">
+          Welcome to NaviPro Credit Cards: Smart solutions for modern spending. 
+          Explore our range of innovative cards tailored to your financial needs. 
+          Start maximizing your rewards today!
+        </p>
+        <Link href="#more" legacyBehavior>
+          <a className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition duration-300">
+            More About Us
           </a>
+        </Link>
+      </section>
+      <section className="bg-gray-50 text-gray-950 py-24 px-4 md:px-10" id='services'>
+        <div className="text-center mb-12">
+          <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Services</h2>
+          <p className="text-lg text-gray-700">
+            All OurCompany Solutions: Silver Credit Card, Gold Credit Card, Diamond Credit Card, and Platinum Cards.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* Silver Card */}
+          <div className="group bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition-colors duration-300">
+              Silver Credit Card
+            </h3>
+            <p className="text-gray-700 mb-4">
+              Perfect for beginners, offering essential features and basic rewards to suit your spending needs.
+            </p>
+           
+          </div>
+
+          {/* Gold Card */}
+          <div className="group bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition-colors duration-300">
+              Gold Credit Card
+            </h3>
+            <p className="text-gray-700 mb-4">
+              Enjoy enhanced rewards, exclusive offers, and greater financial benefits with our Gold Credit Card.
+            </p>
+            
+          </div>
+
+          {/* Diamond Card */}
+          <div className="group bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition-colors duration-300">
+              Diamond Credit Card
+            </h3>
+            <p className="text-gray-700 mb-4">
+              Premium rewards and perks tailored for discerning customers looking for luxury and convenience.
+            </p>
+          
+          </div>
+
+          {/* Platinum Card */}
+          <div className="group bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+            <h3 className="text-2xl font-bold mb-2 group-hover:text-blue-600 transition-colors duration-300">
+              Platinum Credit Card
+            </h3>
+            <p className="text-gray-700 mb-4">
+              The ultimate in rewards, features, and prestige for our most valued customers.
+            </p>
+           
+          </div>
+        </div>
+      </section>
+      <section className="bg-gradient-to-r from-gray-100 via-white to-gray-50 text-gray-950 py-24 px-6 md:px-20 flex flex-col md:flex-row items-center justify-between">
+        {/* Text Content Section */}
+        <div className="max-w-lg md:w-1/2 space-y-6 text-center md:text-left">
+          <h2 className="text-5xl font-extrabold text-blue-700 leading-snug hover:text-blue-800 transition-all duration-300">
+            WE ARE HERE
+          </h2>
+          <p className="text-lg text-gray-700 leading-relaxed hover:text-gray-900 transition-all duration-300">
+            Get your free credit card within <span className="font-semibold text-blue-700">24 hours</span>. 
+            Hassle-free application process tailored for you. Experience simplicity, speed, and security.
+          </p>
+         
+            <button
+              className="inline-block bg-blue-600 text-white px-8 py-4 rounded-full text-lg shadow-md hover:bg-blue-800 hover:shadow-xl hover:scale-105 transition-all duration-300"
+              onClick={openApplyModal} // Attach the click handler
+            >
+              Apply Now
+            </button>
+       
+        </div>
+
+        {/* Image Section */}
+        <div className="relative w-full md:w-1/2 h-64 md:h-auto flex justify-center items-center">
+          <div className="relative group">
+            <Image
+              src="/card.png" // Replace with your optimized image path
+              alt="Apply for Credit Card"
+              objectFit="contain"
+              className="transform group-hover:scale-110 transition-transform duration-300"
+              height={600}
+              width={400}
+            />
+            {/* Decorative Circular Glow */}
+            <div className="absolute -top-6 -left-6 h-full w-full rounded-full bg-blue-400 opacity-20 blur-2xl group-hover:opacity-20 group-hover:scale-125 transition-all duration-300"></div>
+          </div>
+        </div>
+      </section>
+
+      {/* Apply Modal */}
+      <ApplyNowModal isOpen={isApplyModalOpen} onClose={closeApplyModal} />
+      <section className="bg-gradient-to-b from-white to-gray-100 py-24 px-6 md:px-20 text-gray-950" id='more'>
+      <div className="text-center mb-12">
+        <h2 className="text-5xl font-extrabold text-blue-700 mb-4">
+          Our Achievements
+        </h2>
+        <p className="text-lg text-gray-700">
+          Here's what we’ve accomplished so far. We’re proud to deliver exceptional results and services to our clients.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {/* Statistic Card 1 */}
+        <div className="group bg-white shadow-lg rounded-lg p-8 text-center hover:shadow-xl transition-all duration-300">
+          <h3 className="text-5xl font-bold text-blue-600 group-hover:text-blue-800 transition-all duration-300">
+            16,645
+          </h3>
+          <p className="text-lg text-gray-700 mt-4 group-hover:text-gray-900 transition-all duration-300">
+            Finished Projects
+          </p>
+        </div>
+
+        {/* Statistic Card 2 */}
+        <div className="group bg-white shadow-lg rounded-lg p-8 text-center hover:shadow-xl transition-all duration-300">
+          <h3 className="text-5xl font-bold text-blue-600 group-hover:text-blue-800 transition-all duration-300">
+            2543+
+          </h3>
+          <p className="text-lg text-gray-700 mt-4 group-hover:text-gray-900 transition-all duration-300">
+            Working Hours
+          </p>
+        </div>
+
+        {/* Statistic Card 3 */}
+        <div className="group bg-white shadow-lg rounded-lg p-8 text-center hover:shadow-xl transition-all duration-300">
+          <h3 className="text-5xl font-bold text-blue-600 group-hover:text-blue-800 transition-all duration-300">
+            15,952+
+          </h3>
+          <p className="text-lg text-gray-700 mt-4 group-hover:text-gray-900 transition-all duration-300">
+            Happy Clients
+          </p>
+        </div>
+
+        {/* Statistic Card 4 */}
+        <div className="group bg-white shadow-lg rounded-lg p-8 text-center hover:shadow-xl transition-all duration-300">
+          <h3 className="text-5xl font-bold text-blue-600 group-hover:text-blue-800 transition-all duration-300">
+            14,700
+          </h3>
+          <p className="text-lg text-gray-700 mt-4 group-hover:text-gray-900 transition-all duration-300">
+            Issued Cards
+          </p>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
+    </section>
+    {/* faq section */}
+    <div className="p-5 bg-gray-100 rounded-lg shadow" id='faq'>
+      <h1 className="text-3xl font-light text-center mb-6 text-blue-600">Frequently Asked Questions?</h1>
+      <div className="space-y-4">
+        {questionsAnswers.map((qa, index) => (
+          <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+            <button
+              onClick={() => toggleFAQ(index)}
+              className="flex justify-between items-center w-full text-left text-lg text-gray-800 font-medium"
+            >
+              <span>{qa.question}</span>
+              <span className="text-blue-500">{activeIndex === index ? '-' : '+'}</span>
+            </button>
+            {activeIndex === index && (
+              <p className="mt-2 text-gray-600">{qa.answer}</p>
+            )}
+          </div>
+        ))}
       </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
+    </div>
+    <section className="bg-gradient-to-b from-gray-50 to-white py-24 px-6 md:px-20 text-gray-950" id='contact'>
+      <div className="text-center mb-12">
+        <h2 className="text-5xl font-extrabold text-blue-700 mb-4">
+          Contact Us
+        </h2>
+        <p className="text-lg text-gray-700">
+          Have questions? We're here to help! Feel free to reach out to us using the form below or through our contact details.
+        </p>
       </div>
-    </main>
-  )
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-12">
+        {/* Contact Information */}
+        <div className="md:w-1/3 bg-white rounded-lg shadow-lg p-8 text-center md:text-left">
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Get in Touch</h3>
+          <p className="text-gray-700 mb-4">
+            We’re available Monday to Friday, 9:00 AM - 6:00 PM. Reach out to us, and we’ll get back to you promptly.
+          </p>
+          <p className="text-gray-900 font-semibold">
+            Email: <a href="mailto:ajaykumar247pp@gmail.com" className="text-blue-600 hover:underline">ajaykumar247pp@gmail.com</a>
+          </p>
+          <p className="text-gray-900 font-semibold mt-2">
+            Phone: <a href="tel:+917568639778" className="text-blue-600 hover:underline">+91 7568639778</a>
+          </p>
+          <p className="text-gray-900 font-semibold mt-2">
+            Address: Vaishnavi Tech Square, Ibbaluru, Bellandur, Bengaluru, Karnataka 560103
+          </p>
+        </div>
+
+        {/* Contact Form */}
+        <div className="md:w-2/3 bg-white rounded-lg shadow-lg p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h3>
+          <form>
+            {/* Name */}
+            <div className="mb-6">
+              <label htmlFor="name" className="block text-gray-700 font-semibold mb-2">
+                Name
+              </label>
+              <input
+                type="text"
+                id="name"
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                placeholder="Your Name"
+              />
+            </div>
+
+            {/* Email */}
+            <div className="mb-6">
+              <label htmlFor="email" className="block text-gray-700 font-semibold mb-2">
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+              
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                placeholder="Your Email"
+              />
+            </div>
+
+            {/* Message */}
+            <div className="mb-6">
+              <label htmlFor="message" className="block text-gray-700 font-semibold mb-2">
+                Message
+              </label>
+              <textarea
+                id="message"
+               
+                className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
+                placeholder="Your Message"
+              ></textarea>
+            </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-3 rounded-lg text-lg font-bold hover:bg-blue-800 transition-all duration-300"
+            >
+              Send Message
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+    </div>
+  );
 }
