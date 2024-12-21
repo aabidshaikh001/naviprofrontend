@@ -20,7 +20,7 @@ const AdminDashboard = () => {
 
     try {
       setIsUploading(true);
-      const response = await axios.post('http://localhost:5000/api/upload-qr', formData, {
+      const response = await axios.post('https://backend.navipro.in/api/upload-qr', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       setUploadedQrImage(response.data.url); // Assuming server responds with the uploaded image URL
@@ -45,7 +45,7 @@ const AdminDashboard = () => {
   // Function to handle admin login
   const handleLogin = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/admin/login', loginData);
+      const response = await axios.post('https://backend.navipro.in/admin/login', loginData);
       if (response.status === 200) {
         setIsLoggedIn(true); // Update login state
         fetchAdminDetails(); // Fetch user data after successful login
@@ -60,7 +60,7 @@ const AdminDashboard = () => {
   // Function to fetch admin-related user data
   const fetchAdminDetails = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/admin/users');
+      const response = await axios.get('https://backend.navipro.in/admin/users');
       setAdminDetails(response.data.users);
       setIsLoading(false);
     } catch (error) {
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
   // Fetch user details separately
   const fetchUserDetails = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/admin/userDetails');
+      const response = await axios.get('https://backend.navipro.in/admin/userDetails');
       setDetails(response.data.userDetails);
     } catch (error) {
       console.error('Error fetching user details:', error);

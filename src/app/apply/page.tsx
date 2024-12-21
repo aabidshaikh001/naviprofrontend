@@ -56,7 +56,7 @@ export default function ApplyPage() {
 
     const fetchQrCode = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/get-qr");
+        const response = await axios.get("https://backend.navipro.in/api/get-qr");
         setQrCodeUrl(response.data.url);
       } catch (error) {
         console.error("Error fetching QR Code:", error);
@@ -89,7 +89,7 @@ export default function ApplyPage() {
         return;
       }
       try {
-        await axios.post("http://localhost:5000/api/user-details/save", formData);
+        await axios.post("https://backend.navipro.in/api/user-details/save", formData);
         toast.success("Details saved successfully.", { position: "top-left" });
 
         const newCardData = {
