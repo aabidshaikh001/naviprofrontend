@@ -114,16 +114,6 @@ export default function Footer() {
         </div>
       </div>
 
-      {/* Footer Bottom */}
-      <div className="mt-12 border-t border-gray-700 pt-6 text-center text-gray-500">
-        <p>
-          Designed & Developed by{' '}
-          <a href="https://tapirsoft.com" className="text-blue-500 hover:underline">
-           Tapirsoft
-          </a>
-        </p>
-        
-      </div>
-    </footer>
+       </footer>
   );
 }

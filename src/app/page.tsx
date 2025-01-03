@@ -210,7 +210,7 @@ export default function Home() {
           Our Achievements
         </h2>
         <p className="text-lg text-gray-700">
-          Here's what we’ve accomplished so far. We’re proud to deliver exceptional results and services to our clients.
+          Here&apos;s what we’ve accomplished so far. We’re proud to deliver exceptional results and services to our clients.
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -281,7 +281,7 @@ export default function Home() {
           Contact Us
         </h2>
         <p className="text-lg text-gray-700">
-          Have questions? We're here to help! Feel free to reach out to us using the form below or through our contact details.
+          Have questions? We&apos;re here to help! Feel free to reach out to us using the form below or through our contact details.
         </p>
       </div>
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-12">

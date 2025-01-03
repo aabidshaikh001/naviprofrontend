@@ -30,7 +30,7 @@ export default function ApplyNowModal({ isOpen, onClose }: { isOpen: boolean; on
     }
 
     try {
-      await axios.post('https://backend.navipro.in/api/auth/register', {
+      await axios.post('http://localhost:5000/api/auth/register', {
         name,
         email,
         phone,
