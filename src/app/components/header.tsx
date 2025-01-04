@@ -35,12 +35,12 @@ export default function Header() {
         <div>
   <Link href="/" legacyBehavior>
     <a>
-      <Image
+      <img
         src="/logobg.png" // Path to your logo image
         alt="Logo"
         width={150} // Adjust width as needed
         height={50} // Adjust height as needed
-        priority // Optimizes loading for your logo
+        
       />
     </a>
   </Link>

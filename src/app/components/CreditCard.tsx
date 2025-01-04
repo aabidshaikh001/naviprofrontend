@@ -37,12 +37,12 @@ const CreditCard: React.FC<CreditCardProps> = ({
 
           {/* Chip */}
           <div className="absolute top-20 left-4">
-            <Image src="/chip.png" alt="Card Chip" width={40} height={30} />
+            <img src="/chip.png" alt="Card Chip" width={40} height={30} />
           </div>
 
             {/* Additional Image (Right of Chip) */}
             <div className="absolute top-16 left-14">
-            <Image
+            <img
               src="/nfc.png"
               alt="Additional Image"
               width={60}
@@ -71,7 +71,7 @@ const CreditCard: React.FC<CreditCardProps> = ({
 
           {/* Visa Logo */}
           <div className="absolute bottom-2 right-1">
-            <Image src="/visa.png" alt="Visa Logo" width={70} height={20} />
+            <img src="/visa.png" alt="Visa Logo" width={70} height={20} />
           </div>
         </div>
 

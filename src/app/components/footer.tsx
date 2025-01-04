@@ -20,12 +20,12 @@ export default function Footer() {
         <div className='mb-5'>
   <Link href="/" legacyBehavior>
     <a>
-      <Image
+      <img
         src="/logobg.jpg" // Path to your logo image
         alt="Logo"
         width={180} // Adjust width as needed
         height={50} // Adjust height as needed
-        priority // Optimizes loading for your logo
+        
       />
     </a>
   </Link>

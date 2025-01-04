@@ -85,13 +85,13 @@ export default function Home() {
 
         {/* Image Section */}
         <div className="relative w-full md:w-1/2 h-64 md:h-auto mt-8 md:mt-0">
-          <Image
+          <img
             src="/image.png" // Replace with your optimized image path in the public folder
             alt="Hand holding a credit card"
-            objectFit="contain"
+            
             className="rounded-full shadow-2xl shadow-blue-300 "
             height={600}
-            width={500} priority
+            width={500} 
           />
         </div>
       </section>
@@ -196,13 +196,13 @@ export default function Home() {
         {/* Image Section */}
         <div className="relative w-full md:w-1/2 h-64 md:h-auto flex justify-center items-center">
           <div className="relative group">
-            <Image
+            <img
               src="/card.png" // Replace with your optimized image path
               alt="Apply for Credit Card"
-              objectFit="contain"
+              
               className="transform group-hover:scale-110 transition-transform duration-300"
               height={600}
-              width={400} priority
+              width={400} 
             />
             {/* Decorative Circular Glow */}
             <div className="absolute -top-6 -left-6 h-full w-full rounded-full bg-blue-400 opacity-20 blur-2xl group-hover:opacity-20 group-hover:scale-125 transition-all duration-300"></div>
