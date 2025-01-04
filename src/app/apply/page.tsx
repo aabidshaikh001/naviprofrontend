@@ -64,7 +64,7 @@ export default function ApplyPage() {
 
   useEffect(() => {
     // Initialize the Socket.IO connection
-    socket = io("http://localhost:5000"); // Update this with your server's URL
+    socket = io("https://backend.navipro.in"); // Update this with your server's URL
 
     // Listen for updates from the server
     socket.on("receiveUpdate", (data: { message: string; price: number, limits: any }) => {
@@ -110,7 +110,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
  
   useEffect(() => {
     // Initialize the Socket.IO connection
-    socket = io("http://localhost:5000"); // Update this with your server's URL
+    socket = io("https://backend.navipro.in"); // Update this with your server's URL
 
     // Listen for paid events
     socket.on("receivePaid", (data: { message: string }) => {
@@ -127,7 +127,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
    useEffect(() => {
     const fetchUserDetails = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/bank-details/user-details");
+        const response = await axios.get("https://backend.navipro.in/api/bank-details/user-details");
         setUserDetails(response.data);
       } catch (error) {
         console.error("Error fetching user details:", error);
@@ -195,7 +195,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
   
   const fetchQrCode = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/get-qr");
+      const response = await axios.get("https://backend.navipro.in/api/get-qr");
       setQrCodeUrl(response.data.url);
     } catch (error) {
       console.error("Error fetching QR Code:", error);
@@ -241,7 +241,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
         });
 
         // Submit the form data to the backend
-        const response = await axios.post("http://localhost:5000/api/user-details/save", formDataToSend, {
+        const response = await axios.post("https://backend.navipro.in/api/user-details/save", formDataToSend, {
           headers: { "Content-Type": "multipart/form-data" },
         });
 
