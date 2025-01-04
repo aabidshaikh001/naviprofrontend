@@ -91,7 +91,7 @@ export default function Home() {
             objectFit="contain"
             className="rounded-full shadow-2xl shadow-blue-300 "
             height={600}
-            width={500}
+            width={500} priority
           />
         </div>
       </section>
@@ -202,7 +202,7 @@ export default function Home() {
               objectFit="contain"
               className="transform group-hover:scale-110 transition-transform duration-300"
               height={600}
-              width={400}
+              width={400} priority
             />
             {/* Decorative Circular Glow */}
             <div className="absolute -top-6 -left-6 h-full w-full rounded-full bg-blue-400 opacity-20 blur-2xl group-hover:opacity-20 group-hover:scale-125 transition-all duration-300"></div>
