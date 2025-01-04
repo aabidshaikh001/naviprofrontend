@@ -54,6 +54,10 @@ export default function Home() {
     e.preventDefault(); // Prevent the default navigation behavior
     setIsApplyModalOpen(true);
   };
+  const handleLoginSuccess = () => {
+    console.log("User logged in successfully!");
+    // Perform any actions needed after login, e.g., update state, fetch data
+  };
 
   const closeApplyModal = () => setIsApplyModalOpen(false);
   return (
@@ -92,7 +96,11 @@ export default function Home() {
         </div>
       </section>
         {/* Login Modal */}
-        <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
+        <LoginModal
+  isOpen={isLoginModalOpen}
+  onClose={closeLoginModal}
+  onLoginSuccess={handleLoginSuccess}
+/>
       <section className="bg-white text-gray-950 py-24 px-4 md:px-10 flex flex-col items-center text-center" id='about'>
         {/* About Us Section */}
         <h2 className="text-3xl md:text-4xl font-bold mb-4">
