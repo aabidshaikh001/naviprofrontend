@@ -75,12 +75,24 @@ export default function Home() {
             Welcome to NaviPro: Where Smart Choices Meet Limitless Rewards
             with Our Range of Credit Cards!
           </p>
-          <button
-              className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition duration-300"
-              onClick={openLoginModal} // Attach the click handler
-            >
-              Login
-            </button>
+          <div className="flex items-center space-x-4">
+  {/* Login Button */}
+  <button
+    className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition duration-300"
+    onClick={openLoginModal} // Attach the click handler
+  >
+    Login
+  </button>
+
+  {/* Apply Now Button */}
+  <button
+    className="inline-block bg-green-500 text-white px-6 py-3 rounded-lg text-lg hover:bg-green-800 transition duration-300"
+    onClick={openApplyModal} // Attach the click handler
+  >
+    Apply Now
+  </button>
+</div>
+
         </div>
 
         {/* Image Section */}
