@@ -42,6 +42,7 @@ export default function ApplyNowModal({ isOpen, onClose }: { isOpen: boolean; on
         position: 'top-left',
       });
       onClose();
+      
       router.push('/apply');
     } catch (error: any) {
       toast.error(error.response?.data?.message || 'Registration failed.',{
