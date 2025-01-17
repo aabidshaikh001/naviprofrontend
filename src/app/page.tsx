@@ -75,7 +75,8 @@ export default function Home() {
             Welcome to NaviPro: Where Smart Choices Meet Limitless Rewards
             with Our Range of Credit Cards!
           </p>
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-4 justify-center md:justify-start">
+
   {/* Login Button */}
   <button
     className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg text-lg hover:bg-blue-800 transition duration-300"
@@ -136,7 +137,7 @@ export default function Home() {
         <div className="text-center mb-12">
           <h2 className="text-4xl md:text-5xl font-bold mb-4">Our Services</h2>
           <p className="text-lg text-gray-700">
-            All OurCompany Solutions: Silver Credit Card, Gold Credit Card, Diamond Credit Card, and Platinum Cards.
+            All Navipro Solutions: Silver Credit Card, Gold Credit Card, Diamond Credit Card, and Platinum Cards.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

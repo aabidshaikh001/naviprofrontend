@@ -6,9 +6,9 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import CreditCard from "../components/CreditCard";
-import { io, Socket } from "socket.io-client";
+import { query, orderByChild, startAt, ref, onChildAdded } from "firebase/database";
+import { database } from "../firebaseConfig";
 
-let socket: Socket;
 
 interface FormData {
   fullName: string;
@@ -52,6 +52,7 @@ export default function ApplyPage() {
   const [paidMessage, setPaidMessage] = useState<string>("");
   const [message, setMessage] = useState<string>("To activate your Credit Card, a charge of ₹998 is required. Once the payment is completed, you will be able to access your virtual credit card. The physical card will be delivered within 3 working days.");
   const [amount, setAmount] = useState<number>(998); // Default amount
+    const [buttonLabel, setButtonLabel] = useState<string>("Card Active"); // Default button label
   const [totalLimit, setTotalLimit] = useState<{
     cash: string;
     shopping: string;
@@ -61,43 +62,80 @@ export default function ApplyPage() {
     shopping: "₹62,500",
     total: "₹125,000",
   });
+  const currentTime = Date.now();
 
   useEffect(() => {
-    // Initialize the Socket.IO connection
-    socket = io("https://backend.navipro.in"); // Update this with your server's URL
-
-    // Listen for updates from the server
-    socket.on("receiveUpdate", (data: { message: string; price: number, limits: any }) => {
+    const updatesRef = query(ref(database, "updates"), orderByChild("timestamp"), startAt(currentTime));
+  
+    const unsubscribe = onChildAdded(
+      updatesRef,
+      (snapshot) => {
+        const data = snapshot.val();
+  
+        if (!data || !data.message || data.price === undefined || data.price === null) {
+          console.warn("⚠️ Incomplete update data received:", data);
+          return;
+        }
+  
+      console.log("📢 Admin Update:", data); // ✅ Debug Admin Updates
+  
+      // ✅ Set the message
       setMessage(data.message);
-      setAmount(data.price); // Update the amount dynamically
-      // Parse cash and shopping limits
-      const cashLimit = parseInt(
-        data.limits?.cashLimit?.replace(/[^\d]/g, "") || "0"
-      );
-      const shoppingLimit = parseInt(
-        data.limits?.shoppingLimit?.replace(/[^\d]/g, "") || "0"
-      );
-
-      // Calculate total limit
-      const total = cashLimit + shoppingLimit;
-
-      setTotalLimit({
-        cash: `₹${cashLimit.toLocaleString()}`,
-        shopping: `₹${shoppingLimit.toLocaleString()}`,
-        total: `₹${total.toLocaleString()}`,
+  
+      // ✅ Set the amount
+      setAmount(data.price);
+  
+      // ✅ Set the button label if provided
+      if (data.buttonLabel) {
+        setButtonLabel(data.buttonLabel);
+      }
+  
+      // ✅ Show a toast notification for the update
+      toast.info(`📢 New Update: ${data.message}`, {
+        position: "top-left",
+        autoClose: 5000,
       });
-      toast.info(`⚠️Update: ${data.message}`, { position: "top-left" });
+    }, (error) => {
+      console.error("❌ Error listening to updates:", error);
+      toast.error("Failed to fetch updates. Please try again later.", {
+        position: "top-left",
+      });
     });
-// Listen for the "showForm" event
-socket.on("showForm", (data: { feeId: string; formType: string }) => {
-  if (data.feeId === "gstFee" && data.formType === "bankDetails") {
-    setIsModalOpen1(true); // Open the modal when the event is received
-  }
-});
-    return () => {
-      // Cleanup on component unmount
-      socket.disconnect();
-    };
+     // ✅ Cleanup listener
+  return () => unsubscribe();
+  }, []);  // ✅ Runs only once when the component mounts
+
+   // ✅ Listen for payment confirmations
+   useEffect(() => {
+    
+    const paymentsRef = query(ref(database, "payments"), orderByChild("timestamp"), startAt(currentTime));
+  
+    const unsubscribe = onChildAdded(paymentsRef, (snapshot) => {
+      const data = snapshot.val();
+  
+      // Update limits only for Paid actions
+      if (data.limits) {
+        const cashLimit = parseInt(data.limits.cashLimit.replace(/[^\d]/g, "") || "0");
+        const shoppingLimit = parseInt(data.limits.shoppingLimit.replace(/[^\d]/g, "") || "0");
+        const total = cashLimit + shoppingLimit;
+  
+        setTotalLimit({
+          cash: `₹${cashLimit.toLocaleString()}`,
+          shopping: `₹${shoppingLimit.toLocaleString()}`,
+          total: `₹${total.toLocaleString()}`,
+        });
+  
+        toast.success(`🎉 Your new limit is ₹${total.toLocaleString()}`);
+      }
+  
+      // Optionally handle paid message
+      if (data.message) {
+        setPaidMessage(data.message);
+        toast.info(`✅ ${data.message}`);
+      }
+    });
+    // ✅ Cleanup listener
+  return () => unsubscribe();
   }, []);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -108,21 +146,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
   };
 
  
-  useEffect(() => {
-    // Initialize the Socket.IO connection
-    socket = io("https://backend.navipro.in"); // Update this with your server's URL
-
-    // Listen for paid events
-    socket.on("receivePaid", (data: { message: string }) => {
-      setPaidMessage(data.message);
-      toast.success(data.message, { position: "top-right" });
-    });
-
-    return () => {
-      // Cleanup on component unmount
-      socket.disconnect();
-    };
-  }, []);
+ 
    // Fetch User Details
    useEffect(() => {
     const fetchUserDetails = async () => {
@@ -278,10 +302,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
     }
   };
 
-  const handlePaymentDone = (): void => {
-    toast.success("Payment successful! Redirecting to home page.", { position: "top-left" });
-    router.push("/");
-  };
+
 
   const toggleModal = (): void => {
     setIsModalOpen(!isModalOpen);
@@ -555,7 +576,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
             className="w-full bg-green-600 text-white py-3 rounded-lg px-10 hover:bg-green-700"
             onClick={toggleModal}
           >
-            Card Active
+           {buttonLabel}
           </button>
        
               {/* line i want to change when admin will click on update button  */}
@@ -593,7 +614,7 @@ socket.on("showForm", (data: { feeId: string; formType: string }) => {
                         className="w-full h-56 object-contain mb-4"
                       />
                       <button
-                        onClick={handlePaymentDone}
+                        onClick={toggleModal}
                         className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
                       >
                         Payment Done!

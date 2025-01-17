@@ -31,7 +31,7 @@ export default function Footer() {
   </Link>
 </div>
           <p className="text-gray-400 mb-4">
-            OurCompany is your trusted partner in providing innovative credit card solutions. Discover seamless, secure, and rewarding experiences with us.
+            NaviPro is your trusted partner in providing innovative credit card solutions. Discover seamless, secure, and rewarding experiences with us.
           </p>
           <p className="text-gray-400">
             © {new Date().getFullYear()} OurCompany. All rights reserved.

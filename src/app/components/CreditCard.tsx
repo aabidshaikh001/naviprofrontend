@@ -97,7 +97,7 @@ const CreditCard: React.FC<CreditCardProps> = ({
           {/* Additional Details */}
           <div className="absolute bottom-4 left-6">
             <p className="text-xs text-gray-400">
-              For support, call (123) 456-7890 or visit www.navipro.in
+              For support, call (123) 456-7890 or visit navipro.in
             </p>
           </div>
         </div>

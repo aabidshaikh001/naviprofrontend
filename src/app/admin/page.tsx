@@ -1,51 +1,60 @@
 'use client';
 import { useState, useEffect,Fragment,useRef  } from 'react';
 import axios from 'axios';
-import { IconDots, IconEye, IconEyeOff, IconTrash, IconDownload,IconChevronDown,
-  IconChevronUp, } from '@tabler/icons-react';
+import { IconDots, IconEye, IconEyeOff, IconTrash, IconDownload } from '@tabler/icons-react';
 import * as XLSX from 'xlsx';
-import { io,Socket } from 'socket.io-client';
-let socket: Socket;
 
+import { ref, push } from "firebase/database";
+import { database } from "../firebaseConfig";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+interface Fee {
+  id: string;
+  name: string;
+  price: string;
+  updateMessage: string;
+  paidMessage: string;
+  limits: { cashLimit: string; shoppingLimit: string };
+  buttonLabel: string;
+}
 const AdminDashboard = () => {
   
-  const socketRef = useRef<Socket | null>(null); // Use useRef for socket instance
+
   const [limit, setLimit] = useState("₹113,997");
+  const [otherFeePrice, setOtherFeePrice] = useState("0");
+  const [paidFees, setPaidFees] = useState<{ [key: string]: { cashLimit: string; shoppingLimit: string } }>({});
   const handleLimitChange = (value: string) => {
     setLimit(value);
   };
-  const [bankDetails, setBankDetails] = useState<any>(null);
+  const handleOtherFeePriceChange = (value: string) => {
+    setOtherFeePrice(value); // [COMMIT] Directly set string input
+  };
 
   
 
-  useEffect(() => {
-    // Initialize the Socket.IO connection
-    socketRef.current = io("https://backend.navipro.in");
 
-    return () => {
-      // Cleanup on component unmount
-      socketRef.current?.disconnect();
-    };
-  }, []);
 
-  // Static configuration for fees, prices, and messages
   const fees = [
     {
       id: "annualFee",
       name: "Annual Fee",
-      price: 998,
+      price: "998",
+      
       updateMessage:
         "To activate your Credit Card, a charge of ₹998 is required. Once the payment is completed, you will be able to access your virtual credit card. The physical card will be delivered within 3 working days.",
       paidMessage: "The Annual Fee of ₹998 has been marked as Paid!",
       limits: {
     cashLimit: "₹62,500",
     shoppingLimit: "₹62,500",
+    
   },
+  buttonLabel: "Card Active",
     },
     {
       id: "insuranceFee",
       name: "Insurance Fee",
-      price: 2999,
+      price: "2999",
       updateMessage:
         "An Insurance Fee of ₹2,999 is applicable. This fee covers the insurance for your card, providing coverage as per the terms and conditions.",
       paidMessage: "The Insurance Fee of ₹2,999 has been marked as Paid!",
@@ -53,11 +62,12 @@ const AdminDashboard = () => {
         cashLimit: "₹63,999",
         shoppingLimit: "₹63,999",
       }, 
+      buttonLabel: "Click for Insurance",
     },
     {
       id: "gstFee",
       name: "GST Fee",
-      price: 4999,
+      price: "4999",
       updateMessage:
         "A GST Fee of ₹4,999 is applicable. This fee includes the Goods and Services Tax associated with your card and services.",
       paidMessage: "The GST Fee of ₹4,999 has been marked as Paid!",
@@ -65,11 +75,13 @@ const AdminDashboard = () => {
         cashLimit: "₹91,499",
         shoppingLimit: "₹91,499",
       },
+      buttonLabel: "Click for GST",
+
     },
     {
       id: "fdFee",
       name: "FD Fee",
-      price: 10999,
+      price: "10999",
       updateMessage:
         "To process your Fixed Deposit, a charge of ₹10,999 is required. This fee covers the setup and maintenance of your FD with the card's associated benefits.",
       paidMessage: "The FD Fee of ₹10,999 has been marked as Paid!",
@@ -77,11 +89,12 @@ const AdminDashboard = () => {
         cashLimit: "₹96,998",
         shoppingLimit: "₹96,998",
       },
+      buttonLabel: "Click for FD",
     },
     {
       id: "walletFee",
       name: "Wallet Fee",
-      price: 11999,
+      price: "11999",
       updateMessage:
         "A Wallet Fee of ₹11,999 is applicable. This charge covers the setup and management of your card's digital wallet for online transactions.",
       paidMessage: "The Wallet Fee of ₹11,999 has been marked as Paid!",
@@ -89,11 +102,12 @@ const AdminDashboard = () => {
         cashLimit: "₹102,998",
         shoppingLimit: "₹102,998",
       },
+      buttonLabel: "Click for Wallet",
     },
     {
       id: "membershipFee",
       name: "Membership Fee",
-      price: 8999,
+      price: "8999",
       updateMessage:
         "Your Membership Fee of ₹8,999 grants you access to exclusive cardholder benefits, discounts, and services.",
       paidMessage: "The Membership Fee of ₹8,999 has been marked as Paid!",
@@ -101,11 +115,12 @@ const AdminDashboard = () => {
         cashLimit: "₹107,497",
         shoppingLimit: "₹107,497",
       },
+      buttonLabel: "Click for Membership",
     },
     {
       id: "chambershipFee",
       name: "Chambership Fee",
-      price: 12999,
+      price: "12999",
       updateMessage:
         "A Chambership Fee of ₹12,999 is required for accessing premium services related to your card. This includes personalized benefits, special offers, and higher transaction limits.",
       paidMessage: "The Chambership Fee of ₹12,999 has been marked as Paid!",
@@ -113,47 +128,56 @@ const AdminDashboard = () => {
         cashLimit: "₹113,997",
         shoppingLimit: "₹113,997",
       },
+      buttonLabel: "Click for Membership",
     },
     {
       id: "otherFees",
       name: "Other Fees",
-      price: 0,
+      price: otherFeePrice,
       updateMessage: "No additional charges under 'Other Fees' are applicable at this time. Your card will be processed and dispatched promptly. Delivery is expected within seven business days.",
       paidMessage: "No additional charges under 'Other Fees' have been marked as Paid!",
       limits: {
         cashLimit: limit,
         shoppingLimit: limit,
-      },    },
+      }, 
+      buttonLabel: "Click for Other Fees",
+       },
   ];
-
-  // Handle Update function
-  const handleUpdate = (fee: {
-    id: string;
-    updateMessage: string;
-    price: number;
-    limits?: { cashLimit: string; shoppingLimit: string };
-  }) => {
-    if (socketRef.current) {
-      // Emit the update event with fee data
-      socketRef.current.emit("sendUpdate", {
-        feeType: fee.id,
-        message: fee.updateMessage,
-        price: fee.price,
-        limits: fee.limits || {},
+  const handleUpdate = (fee: Fee) => {
+    const updatesRef = ref(database, "updates");
+  
+    // Ensure the price is always sent, including 0
+    const updateData = {
+      message: fee.updateMessage,
+      price: fee.price ?? 0, // Explicitly allow 0
+      buttonLabel: fee.buttonLabel,
+      timestamp: Date.now(),
+    };
+  
+    console.log("Sending update:", updateData); // Debug log
+  
+    push(updatesRef, updateData)
+      .then(() => {
+        toast.info(`Update sent: ${fee.updateMessage}`);
+      })
+      .catch((error) => {
+        console.error("Error updating fee:", error);
+        toast.error("Failed to send update.");
       });
-
-     
-    }
   };
-  const handlePaid = (fee: { id: string; paidMessage: string }) => {
-    if (socketRef.current) {
-      socketRef.current.emit("sendPaid", {
-        feeType: fee.id,
-        message: fee.paidMessage,
-      });
-    } else {
-      console.error("Socket not initialized");
-    }
+  
+  
+  const handlePaid = (fee: Fee) => {
+    const paymentsRef = ref(database, "payments");
+  
+    // Push the paid message along with updated limits
+    push(paymentsRef, {
+      message: fee.paidMessage,
+      limits: fee.limits, // Include limits for Paid action
+      timestamp: Date.now(),
+    });
+  
+    toast.success(`Payment marked: ${fee.paidMessage}`);
   };
   
 
@@ -210,12 +234,16 @@ const AdminDashboard = () => {
   const [showFees, setShowFees] = useState(false);
   const [visibleFees, setVisibleFees] = useState<{ [key: string]: boolean }>({});
   const [activeTab, setActiveTab] = useState<'users' | 'userDetails' | 'qrCode'>('users'); // Add 'qrCode' tab
-  const filteredUsers = adminDetails.filter((user) =>
-    [user.name, user.email, user.phone, user.applyFor, user.income, user.password]
+  const filteredUsers = [...adminDetails]
+  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort by latest
+  .filter((user) =>
+    [user.serialNumber, user.name, user.email, user.phone, user.applyFor, user.income, user.password]
       .some((field) => String(field || '').toLowerCase().includes(searchQuery.toLowerCase()))
   );
-  
-  const filteredDetails = Details.filter((detail) =>
+
+  const filteredDetails = [...Details]
+  .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()) // Sort by latest
+  .filter((detail) =>
     [
       detail.fullName,
       detail.fatherName,
@@ -231,7 +259,7 @@ const AdminDashboard = () => {
       detail.panCardPhoto,
     ].some((field) => String(field || '').toLowerCase().includes(searchQuery.toLowerCase()))
   );
-  
+
 
   // Function to handle admin login
   const handleLogin = async () => {
@@ -250,7 +278,7 @@ const AdminDashboard = () => {
 
   const fetchAdminDetails = async () => {
     try {
-      const response = await axios.get('https://backend.navipro.in/admin/users');
+      const response = await axios.get('https://backend.navipro.in/admin/users',);
     
       setAdminDetails(response.data.users);
       setIsLoading(false);
@@ -260,9 +288,7 @@ const AdminDashboard = () => {
   };
   
   const handleDeleteUser = async (userId: string) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) {
-      return;
-    }
+    
   
     try {
       // Send delete request to the server
@@ -284,6 +310,30 @@ const AdminDashboard = () => {
       alert('Failed to delete user. Please try again.');
     }
   };
+
+  const handleDeleteUsers = async (userId: string) => {
+    console.log('Deleting user with ID:', userId);  // Debug the user ID
+  
+    if (!userId) {
+      alert('Invalid user ID. Cannot delete user.');
+      return;
+    }
+  
+    if (!window.confirm('Are you sure you want to delete this user?')) {
+      return;
+    }
+  
+    try {
+      await axios.delete(`https://backend.navipro.in/admin/users/${userId}`);
+      setAdminDetails((prevDetails) => prevDetails.filter((user) => user._id !== userId));
+      alert('User deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      alert('Failed to delete user. Please try again.');
+    }
+  };
+  
+  
   
   // Load user details from local storage during initialization
   useEffect(() => {
@@ -417,41 +467,73 @@ const AdminDashboard = () => {
           className="p-2 border border-gray-300 rounded w-1/3"
         />
 
-        <div className="flex items-center">
+<div className="flex items-center space-x-4">
+          {/* Rows per page selector */}
+          <select
+            value={rowsPerPage}
+            onChange={(e) => {
+              setRowsPerPage(Number(e.target.value));
+              setCurrentPage(1);  // Reset to page 1 when rows per page changes
+            }}
+            className="px-4 py-2 border rounded"
+          >
+            <option value={10}>10 Records</option>
+            <option value={20}>20 Records</option>
+            <option value={30}>30 Records</option>
+          </select>
+
           {/* Download Excel */}
           <button
-            onClick={() => handleDownloadExcel(activeTab === 'users' ? filteredUsers : filteredDetails)}
+            onClick={() => handleDownloadExcel(paginatedUsers, `Users_Page_${currentPage}.xlsx`)}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 flex items-center"
           >
             <IconDownload size={20} />
             Download Excel
           </button>
-
-        
         </div>
       </div>
+
+
+
 
 
     <table className="min-w-full bg-white border border-gray-200">
       <thead>
         <tr>
+        <th className="p-2 border-b">Sr No</th> {/* New Serial Number Column */}
           <th className="p-2 border-b">Name</th>
           <th className="p-2 border-b">Email</th>
           <th className="p-2 border-b">Phone</th>
           <th className="p-2 border-b">Apply For</th>
           <th className="p-2 border-b">Income</th>
           <th className="p-2 border-b">Password</th>
+          <th className="p-2 border-b">Date & Time</th> {/* New Column */}
+          <th className="p-2 border-b">Actions</th> 
         </tr>
       </thead>
       <tbody>
         {filteredUsers.map((user, index) => (
           <tr key={index}>
+             <td className="p-2 border-b">{user.serialNumber || index + 1}</td> {/* Display Serial Number */}
             <td className="p-2 border-b">{user.name || 'N/A'}</td>
             <td className="p-2 border-b">{user.email || 'N/A'}</td>
             <td className="p-2 border-b">{user.phone || 'N/A'}</td>
             <td className="p-2 border-b">{user.applyFor || 'N/A'}</td>
             <td className="p-2 border-b">{user.income || 'N/A'}</td>
             <td className="p-2 border-b">{user.password || 'N/A'}</td>
+            <td className="p-2 border-b">
+          {user.createdAt ? new Date(user.createdAt).toLocaleString() : 'N/A'}
+        </td>
+              {/* Delete Button */}
+        <td className="p-2 border-b">
+          <button
+            onClick={() => handleDeleteUsers(user._id)}
+            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 flex items-center"
+          >
+            <IconTrash size={18} className="mr-1" />
+            Delete
+          </button>
+        </td>
           </tr>
         ))}
       </tbody>
@@ -616,12 +698,20 @@ const AdminDashboard = () => {
       
        {/* Input Box for Limit */}
        <div className="mb-6">
-        <h3 className="text-lg font-semibold mb-2">Adjust Limit for Other Fees</h3>
+       <h3 className="text-lg font-semibold mb-2">Adjust Limit for Other Fees</h3>
         <label className="block text-gray-700 font-medium mb-1">Cash & Shopping Limit</label>
         <input
           type="text"
           value={limit}
           onChange={(e) => handleLimitChange(e.target.value)}
+          className="p-2 border border-gray-300 rounded w-full mb-4"
+        />
+
+        <label className="block text-gray-700 font-medium mb-1">Other Fee Price</label>
+        <input
+          type="number"
+          value={otherFeePrice}
+          onChange={(e) => handleOtherFeePriceChange(e.target.value)}
           className="p-2 border border-gray-300 rounded w-full"
         />
       </div>
@@ -634,6 +724,7 @@ const AdminDashboard = () => {
               {/* Update Button */}
               <button
                 onClick={() => handleUpdate(fee)}
+                disabled={!fee.price}
                 className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors duration-200"
               >
                 Update
